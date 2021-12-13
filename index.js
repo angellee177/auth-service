@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
     res.status(StatusCodes.OK).json({
         success: {
             status: true,
-            message: 'Welcome to PRIZE API!'
+            message: 'Welcome to Authentication API!'
         },
         data: null
     })
