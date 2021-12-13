@@ -37,8 +37,6 @@ const userSchema = new Schema({
     address: {
         type: String,
     },
-    orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Orders" }],
-    prizesDeliveries: [{ type: mongoose.Schema.Types.ObjectId, ref: "Deliveries" }],
     created_at: {
         type: Date,
         default: Date.now,

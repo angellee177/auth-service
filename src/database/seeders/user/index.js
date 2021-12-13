@@ -7,24 +7,9 @@ const seedUsers = async() => {
 
         const users = [
             {
-              username: "anugrahaman71",
-              email: "anugrahaman71@gmail.com",
+              username: "angellee177",
+              email: "angelriapurnamasari17@gmail.com",
               password
-            },
-            {
-              username: "rahelpratama413",
-              email: "rahelpratama413@gmail.com",
-              password
-            },
-            {
-              username: "aisyahrodiah354",
-              email: "aisyahrodiah354@gmail.com",
-              password
-            },
-            {
-                username: "donomargonobegono97",
-                email: "donomargonobegono97@gmail.com",
-                password
             }
           ];
 

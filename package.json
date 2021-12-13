@@ -13,8 +13,6 @@
     "node.js",
     "express.js",
     "npm",
-    "sequelize",
-    "postgreSql",
     "jest",
     "express-validation"
   ],
