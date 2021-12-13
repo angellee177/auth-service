@@ -6,8 +6,8 @@ const seedAdmin = async() => {
         const password   = 'White1704';
 
         const admins = [{
-              username: "rg-admin",
-              email: "admin@abersoft.com",
+              username: "admin",
+              email: "admin@xpense.com",
               password,
               role: 0
             }];
