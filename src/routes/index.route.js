@@ -1,7 +1,7 @@
 const express       = require('express')
     , routes        = express.Router()
-    , userRoutes   = require('./users/users.route')
-    , authRoutes    = require('./authUser/authUsers.route');
+    , userRoutes   = require('./users/index.route')
+    , authRoutes    = require('./authentication/index.route');
 
 routes.use('/auth'  ,   authRoutes);
 routes.use('/users' ,   userRoutes);

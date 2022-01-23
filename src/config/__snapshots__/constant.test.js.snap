@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Constant Test Suite NODE_ENVIRONMENT attributes should match snapshot 1`] = `
+Object {
+  "dev": "development",
+  "prod": "production",
+  "test": "testing",
+}
+`;

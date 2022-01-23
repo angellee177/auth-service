@@ -1,4 +1,6 @@
-const User =  require('../database/models/users/index');
+const User =  require('../../database/models/users/index')
+    , { throwErrorsHttp, setLog } = require('../../helper/utils')
+    , { StatusCodes } = require('http-status-codes');
 
 /**
  * 

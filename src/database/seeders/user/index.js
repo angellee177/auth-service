@@ -14,7 +14,8 @@ const seedUsers = async() => {
           ];
 
         let i = 0;
-        while(i < 4){
+        while(i < users.length){
+            
             const isExistingUser = await User.findOne({
                 username: users[i]['username']
             });

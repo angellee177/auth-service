@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "cover": "node --max-old-space-size=3000 ./node_modules/jest/bin/jest.js /src/controllers --coverage --detectOpenHandles --forceExit",
+    "cover": "node --max-old-space-size=3000 ./node_modules/jest/bin/jest.js /src --coverage --detectOpenHandles --forceExit",
     "test": "node --max-old-space-size=3000 ./node_modules/jest/bin/jest.js /src --verbose --detectOpenHandles --forceExit"
   },
   "keywords": [
