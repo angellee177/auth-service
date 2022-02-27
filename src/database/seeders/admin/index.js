@@ -1,5 +1,6 @@
 const User = require('../../models/users/index')
-    , { setLog } = require('../../../helper/utils');
+    , { setLog } = require('../../../helper/utils')
+    , { roles: ROLE } = require('../../../config/constant');
 
 const seedAdmin = async() => {
     try {
@@ -9,7 +10,7 @@ const seedAdmin = async() => {
               username: "admin",
               email: "admin@xpense.com",
               password,
-              role: 0
+              roles: JSON.stringify([ ROLE['ADM']['code'] ])
             }];
 
         let i = 0;
@@ -24,7 +25,7 @@ const seedAdmin = async() => {
                 await admin.save();
                 
                 setLog({
-                    level: 'Seeders', method: 'Seeding Admin', message: "success"
+                    level: 'Seeders', method: `Seeding Admin ${admins[i]['username']}`, message: "success"
                 });
             };
             i++;

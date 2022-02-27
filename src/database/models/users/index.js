@@ -9,6 +9,7 @@ const mongoose = require('mongoose')
 const userSchema = new Schema({
     username: {
         type: String,
+        unique: true,
     },
     email: {
         type: String,
@@ -23,10 +24,9 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    role: {
-        type: Number,
-        enum: [0, 1],
-        default: 1
+    roles: {
+        type: String,
+        required: true
     },
     full_name: {
         type: String,

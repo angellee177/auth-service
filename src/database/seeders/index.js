@@ -1,9 +1,11 @@
-const UsersSeeder = require('./user/index')
+const RolesSeeder = require('./roles/index')
+    , UsersSeeder = require('./users/index')
     , AdminsSeeder = require('./admin/index')
     , { setLog } = require('../../helper/utils');
 
 const seedingData = async() => {
     try {
+        await RolesSeeder();
         await AdminsSeeder();
         await UsersSeeder();
     

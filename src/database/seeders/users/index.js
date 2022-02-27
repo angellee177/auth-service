@@ -1,5 +1,6 @@
 const User = require('../../models/users/index')
-    , { setLog } = require('../../../helper/utils');
+    , { setLog } = require('../../../helper/utils')
+    , { roles:  ROLE } = require('../../../config/constant');
 
 const seedUsers = async() => {
     try {
@@ -9,7 +10,8 @@ const seedUsers = async() => {
             {
               username: "angellee177",
               email: "angelriapurnamasari17@gmail.com",
-              password
+              password,
+              roles: JSON.stringify([ ROLE['USR']['code'] ]),
             }
           ];
 
@@ -17,7 +19,7 @@ const seedUsers = async() => {
         while(i < users.length){
             
             const isExistingUser = await User.findOne({
-                username: users[i]['username']
+                email: users[i]['email']
             });
 
             if(!isExistingUser){
@@ -26,7 +28,7 @@ const seedUsers = async() => {
                 await userData.save();
                 
                 setLog({
-                    level: 'Seeders', method: 'Seeding Users', message: "success"
+                    level: 'Seeders', method: `Seeding Users ${users[i]['username']}`, message: "success"
                 });
             };
             i++;
