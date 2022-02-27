@@ -9,8 +9,9 @@ const User =  require('../../database/models/users/index')
  * @param {String} username 
  * @param {String} email 
  * @param {String} password 
+ * @param {String} roles
  */
- const register = async(username, email, password) => {
+ const register = async(username, email, password, roles) => {
     const userInfo = await User.findOne({ email });
       
     if(userInfo) {
@@ -26,6 +27,7 @@ const User =  require('../../database/models/users/index')
         username,
         email,
         password,
+        roles, 
     });
 
     await user.save();

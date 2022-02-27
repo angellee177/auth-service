@@ -5,7 +5,8 @@ const User = require('../database/models/users/index')
     , { setLog, throwErrorsHttp } = require('../helper/utils')
     , Auth = require('../middleware/auth')
     , Service = require('../services/users/index')
-    , bcrypt = require('bcrypt');  
+    , bcrypt = require('bcrypt')
+    , { roles: ROLE } = require('../config/constant');  
 
 /**
  * Login 
@@ -63,7 +64,7 @@ const login = async(req, res, next) => {
         };
 
         // get user info
-        const role = get(userInfo, 'role');
+        const role = get(userInfo, 'roles');
         const username = get(userInfo, 'username');
 
         const token = await Auth.encodingToken(username, role);
@@ -89,10 +90,17 @@ const login = async(req, res, next) => {
  * 
  */
 const register = async(req, res) => {
-    const { username, email, password } = req.body;
+    const { 
+        username, 
+        email, 
+        password, 
+        assignedRole = [ ROLE['USR']['code'] ] 
+    } = req.body;
 
     try {
-        const result = await Service.register(username, email, password);
+        const convertRolesToStr = JSON.stringify(assignedRole);
+
+        const result = await Service.register(username, email, password, convertRolesToStr);
 
         setLog({
             level: 'Auth Controller', method: 'Register new User', message: email, others: username

@@ -1,19 +1,13 @@
-const users = [
-    {
-      username: "angellee177",
-      email: "angelriapurnamasari17@gmail.com",
-      password: 1704
-    },
-    {
-        username: "candle",
-        email: "candle@gmail.com",
-        password: 1704
-      }
-  ];
+const roles = {
+  GA: "General Admin",
+  ADM: "Administrator",
+  OWN: "Owner",
+  OPS: "Operational Team",
+  SPM: "Sales & Purchasing Manager",
+  SPV: "Supervisor",
+  SM: "Sales & Marketing",
+  CS: "Customer Service"
+};
 
-let i = 0;
-while(i < users.length) {
-    console.log(i);
-    console.log(users[i]);
-    i++;
-}
+const values = [roles.CS, roles.ADM];
+console.log("🚀 ~ file: playground.js ~ line 13 ~  values ",  values )

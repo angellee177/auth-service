@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
     , { set, get } = require('lodash')
     , dotenv = require('dotenv')
     , { StatusCodes } = require('http-status-codes')
+    , { roles: availableRoles } = require('../config/constant')
     , { successResponse, errorResponse } = require('../helper/response')
     , { throwErrorsHttp, setLog, defaultToIfEmpty } = require('../helper/utils');
 
@@ -42,14 +43,6 @@ const decodingToken = (token) => {
 
         throwErrorsHttp(errorMessage);
     }
-}
-
-/**
- * available user role
- */
-const availableRoles = {
-    admin: 0,
-    user: 1
 }
 
 /**
