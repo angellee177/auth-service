@@ -47,10 +47,11 @@ const decodingToken = (token) => {
 
 /**
  * Authenticate User
- * @param {String} roles
+ * @param {Array[String]} roles
  * 
  */
 const authenticate = (roles) => async(req, res, next) => {
+
     const token = req.headers["authorization"].split("Bearer ")[1];
 
     try {
@@ -58,23 +59,26 @@ const authenticate = (roles) => async(req, res, next) => {
             return unauthenticated(req, res, next);
         };
     
-        const user = await decodingToken(token);
-        const role = get(user, 'role');      
-        const username = get(user, 'username');        
+        const user      = await decodingToken(token);
         
-        if(role !== availableRoles[roles]) {  
+        const role      = get(user, 'role', null);      
+        const email     = get(user, 'email', null);
+        
+        const authorizeRole = roles.filter((val, i) => val === role[i]);
+        console.log("🚀 ~ file: auth.js ~ line 70 ~ authenticate ~  authorizeRole ",  authorizeRole )
+
+        if(authorizeRole.length === 0) {  
             const errorMessage = "Auth Middleware, authenticate: you don't have permission to access this API!";  
             throwErrorsHttp(errorMessage);
         }
         
         
         
-        set(req.headers, 'User.username', username);
+        set(req.headers, 'User.email', email);
         set(req.headers, 'User.role', role);
                 
         next();
     } catch(e) {
-        console.log(res.status(200));
         return res.status(StatusCodes.UNAUTHORIZED).json(errorResponse(e.message));
     }
     
@@ -89,17 +93,17 @@ const unauthenticated = (req, res, next) => res.status(StatusCodes.UNAUTHORIZED)
 /**
  * Generate Auth Token
  * 
- * @param {String} username
- * @param {String} role
+ * @param { String } email
+ * @param { String } role
  * 
  */
-const encodingToken = async(username, role) => {
+const encodingToken = async(email, role) => {
     const secretKey = defaultToIfEmpty(process.env.JWT_SECRET_KEY, 'fake-secret-key');
 
-    const token = await jwt.sign({ username, role }, secretKey);
+    const token = await jwt.sign({ email, role }, secretKey);
 
     setLog({
-        level: 'Auth Middleware', method: 'Encoding success', message: username, others: role
+        level: 'Auth Middleware', method: 'Encoding success', message: email, others: role
     });
 
     return token;
