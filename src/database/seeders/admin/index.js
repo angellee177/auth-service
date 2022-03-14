@@ -1,27 +1,19 @@
 const User = require('../../models/users/index')
-    , { setLog } = require('../../../helper/utils')
-    , { roles: ROLE } = require('../../../config/constant');
+    , Roles = require('../../models/roles/index')
+    , { setLog, throwErrorsHttp } = require('../../../helper/utils')
+    , admins = require('./adminList');
 
 const seedAdmin = async() => {
     try {
-        const password   = 'White1704';
-
-        const admins = [{
-              username: "admin",
-              email: "admin@xpense.com",
-              password,
-              roles: JSON.stringify([ ROLE['ADM']['code'] ])
-            }];
-
         let i = 0;
-        while(i < 1){
+        while(i < admins.length){
             const isExistingAdmin = await User.findOne({
-                username: admins[i]['username']
+                email: admins[i]['email']
             });
 
             if(!isExistingAdmin){
                 const admin = new User(admins[i]);
-            
+
                 await admin.save();
                 
                 setLog({
