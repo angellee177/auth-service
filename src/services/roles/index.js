@@ -67,7 +67,12 @@ const updateRole = async(roleId, name) => {
  * 
  */
 const getRole = async( roleId ) => {
-    const role = await Roles.findById(roleId);
+    const role = await Roles.findOne({
+        $and: [
+            { _id: roleId },
+            { deleted_at: null }
+        ],
+    });
 
     if(!role) {
         const errorMessage = "Oops, Role doesn't exist. Please try another one.";
@@ -89,7 +94,10 @@ const getRole = async( roleId ) => {
 const roles = async() => {
     const allRole = await Roles.find();
 
-    return allRole;
+    return {
+        roles: allRole,
+        total: allRole.length
+    };
 };
 
 /**
