@@ -1,10 +1,6 @@
 const Controllers = require("./authController");
 const Services = require("../services/users/index");
-const User = require('../database/models/users/index');
 const { StatusCodes } = require('http-status-codes');
-const bcrypt = require('bcrypt');
-
-jest.mock("bcrypt");
 
 describe("authControllers Test Suite", () => {
     let mockReq;
@@ -31,7 +27,6 @@ describe("authControllers Test Suite", () => {
         });
 
         it("success response", async() => {
-            const fakeUsername = "fake-username";
             const fakeEmail = "fake-email";
             const fakePassword = "fake-password";
             mockReq.body = {
@@ -39,41 +34,51 @@ describe("authControllers Test Suite", () => {
                 password: fakePassword
             };
 
-            const fakeUser = getUser(fakeUsername, fakeEmail, fakePassword);
-            const spy = spyUsersFindOne(fakeUser);
+            const fakeToken = "fake-token";
 
-            const fakeVal = true;
-            const mockBcryptCompare = jest.fn(() => fakeVal);
-            const mockBcrypt = jest.fn(() => ({ compare: mockBcryptCompare }));
-            bcrypt.mockImplementation(mockBcrypt);
+            const spy = spyGenerateAuthToken(fakeToken);
 
             const result = await Controllers.login(mockReq, mockRes);
-            console.log("🚀 ~ file: authController.test.js ~ line 50 ~ it ~ result", result)
-
+           
             expect(spy).toHaveBeenCalledTimes(1);
-            expect(spy.mock.calls[0][0]).toMatchObject({ fakeEmail });
-
-            expect(mockBcrypt).toHaveBeenCalledTimes(1);
-            console.log(mockBcrypt.mock.calls[0][0]);
-            expect(mockBcryptCompare).toHaveBeenCalledTimes(1);
-            expect(mockBcryptCompare.mock.calls[0][0]).toBe(fakePassword);
-            expect(mockBcryptCompare.mock.calls[0][1]).toBe(fakePassword);
+            expect(spy.mock.calls[0][0]).toBe(fakeEmail);
+            expect(spy.mock.calls[0][1]).toBe(fakePassword);
 
             expect(mockRes.status).toHaveBeenCalledTimes(1);
             expect(mockRes.status.mock.calls[0][0]).toBe(StatusCodes.OK);
+            
+            expect(result).toMatchObject({
+                success: true,
+                message: 'success',
+                result: fakeToken,
+            });
         });
 
-        // it("should failed response", async() => {
-        //     const fakeError = new Error("fake-error");
-        //     spyUsersFindOne(fakeError, false);
+        it("should failed response", async() => {
+            const fakeEmail = "fake-email";
+            const fakePassword = "fake-password";
+            mockReq.body = {
+                email: fakeEmail,
+                password: fakePassword
+            };
 
-        //     const result = await Controllers.login(mockReq, mockRes);
-        //     console.log("🚀 ~ file: authController.test.js ~ line 71 ~ it ~  result",  result)
+            const fakeError = new Error("fake-error");
+            const spy = spyGenerateAuthToken(fakeError, false);
+
+            const result = await Controllers.login(mockReq, mockRes);   
+
+            expect(spy).toHaveBeenCalledTimes(1);
+            expect(spy.mock.calls[0][0]).toBe(fakeEmail);
+            expect(spy.mock.calls[0][1]).toBe(fakePassword);
+
+            expect(mockRes.status).toHaveBeenCalledTimes(1);
+            expect(mockRes.status.mock.calls[0][0]).toBe(StatusCodes.EXPECTATION_FAILED);
             
-        //     expect(mockRes.status).toHaveBeenCalledTimes(1);
-        //     expect(mockRes.status.mock.calls[0][0]).toBe(StatusCodes.EXPECTATION_FAILED);
-            
-        // })
+            expect(result).toMatchObject({
+                success: false,
+                message: fakeError['message'],
+            });
+        })
     });
 
     describe("register function", () => {
@@ -82,17 +87,81 @@ describe("authControllers Test Suite", () => {
         it("should be defined", () => {
             expect(register).toBeDefined();
         });
+
+        it("success response", async() => {
+            const fakeUsername = "fake-username";
+            const fakeFullname = "fake-fullname";
+            const fakeEmail = "fake-email";
+            const fakePassword = "fake-password";
+            mockReq.body = {
+                username: fakeUsername,
+                email: fakeEmail,
+                password: fakePassword,
+                fullname: fakeFullname,
+            };
+            
+            const fakeUser = getUser(fakeEmail, fakePassword, fakeFullname);
+            const spy = spyRegisterService(fakeUser);
+
+            const result = await register(mockReq, mockRes);
+
+            expect(spy).toHaveBeenCalledTimes(1);
+            expect(spy.mock.calls[0][0]).toMatchObject(mockReq.body);
+            expect(spy.mock.calls[0][1]).toBeUndefined();
+
+            expect(mockRes.status).toHaveBeenCalledTimes(1);
+            expect(mockRes.status.mock.calls[0][0]).toBe(StatusCodes.OK);
+
+            expect(result).toMatchObject({
+                success: true,
+                message: 'success',
+                result: fakeUser,
+            });
+        });
+
+        it("failed response", async() => {
+            const fakeUsername = "fake-username";
+            const fakeFullname = "fake-fullname";
+            const fakeEmail = "fake-email";
+            const fakePassword = "fake-password";
+            mockReq.body = {
+                username: fakeUsername,
+                email: fakeEmail,
+                password: fakePassword,
+                fullname: fakeFullname,
+            };
+            
+            const fakeError = new Error("fake-error");
+            const spy = spyRegisterService(fakeError, false);
+
+            const result = await register(mockReq, mockRes);
+
+            expect(spy).toHaveBeenCalledTimes(1);
+            expect(spy.mock.calls[0][0]).toMatchObject(mockReq['body']);
+
+            expect(mockRes.status).toHaveBeenCalledTimes(1);
+            expect(mockRes.status.mock.calls[0][0]).toBe(StatusCodes.EXPECTATION_FAILED);
+
+            expect(result).toMatchObject({
+                success: false,
+                message: fakeError['message'],
+            });
+        });
     })
 });
 
+const spyGenerateAuthToken = (result, isResolve = true) => (isResolve
+    ? jest.spyOn(Services, 'generateAuthToken').mockResolvedValue(result)
+    : jest.spyOn(Services, 'generateAuthToken').mockRejectedValue(result));
 
-const spyUsersFindOne = (result, isResolve = true) => (isResolve
-    ? jest.spyOn(User, 'findOne').mockResolvedValue(result)
-    : jest.spyOn(User, 'findOne').mockRejectedValue(result));
+const spyRegisterService = (result, isResolve = true) => (isResolve
+    ? jest.spyOn(Services, 'register').mockResolvedValue(result)
+    : jest.spyOn(Services, 'register').mockRejectedValue(result));
 
-const getUser = (username, email, password) => ({
+const getUser = (email, password, fullname) => ({
     userId: 'fake-user-id',
-    username,
+    username: "fake-username",
     email,
-    password
+    password,
+    fullname,
 });
