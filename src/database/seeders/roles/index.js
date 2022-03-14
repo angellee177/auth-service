@@ -1,9 +1,16 @@
 const Roles = require('../../models/roles/index')
+    , User = require('../../models/users/index')
+    , { get } = require('lodash')
     , { setLog } = require('../../../helper/utils')
     , { roles: ROLE } = require('../../../config/constant');
 
 const seedRoles = async() => {
     try {
+
+        const admin = await User.findOne({ roles: ROLE['ADM']['code'] });
+
+        const userId = get(admin, 'id', null);
+
         const listOfRole = [
             ROLE['ADM'],
             ROLE['CS'],
@@ -23,7 +30,11 @@ const seedRoles = async() => {
             });
 
             if(!isExistingRoles) {
-                const role = new Roles(listOfRole[i]);
+                const role = new Roles({
+                    code: listOfRole[i]['code'],
+                    name: listOfRole[i]['code'],
+                    created_by: userId,
+                });
 
                 await role.save();
 
