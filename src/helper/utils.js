@@ -1,6 +1,16 @@
 const { pick, isEmpty, isInteger } = require('lodash')
     , logger = require('loglevel')
-    , stringSanitizer = require('string-sanitizer');
+    // , stringSanitizer = require('string-sanitizer');
+
+/**
+ * Keep space on String
+ * @param {String} str 
+ * 
+ */
+const stringSanitizeKeepSpace = function(str) {
+    var str2 = str.replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, "");
+    return str2.replace(/ /g, " ");
+};
 
 /**
  * Throw an error with set the httpStatuCode value
@@ -8,7 +18,7 @@ const { pick, isEmpty, isInteger } = require('lodash')
  * @param {string} message
  * @param {number} httpStatusCode
  */
-exports.throwErrorsHttp = (message = 'Error', httpStatusCode = 400) => {
+const throwErrorsHttp = (message = 'Error', httpStatusCode = 400) => {
     const error = new Error(message);
     error.httpStatusCode = httpStatusCode;
     throw error;
@@ -19,7 +29,7 @@ exports.throwErrorsHttp = (message = 'Error', httpStatusCode = 400) => {
  * @param {string} value 
  * @param {string} defaultValue 
  */
-exports.defaultToIfEmpty = (value, defaultValue) => {
+const defaultToIfEmpty = (value, defaultValue) => {
     if( isEmpty(value) ) {
         return isInteger(value) ? value : defaultValue;
     };
@@ -36,16 +46,16 @@ exports.defaultToIfEmpty = (value, defaultValue) => {
  * @param {Error=} options.error 
  * @param {String=} options.others
  */
-exports.setLog = (options) => {
+const setLog = (options) => {
     const payload = pick(options, ['level', 'method', 'message', 'error', 'others']);
 
-    let output = stringSanitizer.sanitize.keepSpace(`${payload.level}`);
+    let output = stringSanitizeKeepSpace(`${payload.level}`);
     output += ':';
-    output += stringSanitizer.sanitize.keepSpace(`${payload.method}`);
+    output += stringSanitizeKeepSpace(`${payload.method}`);
     output += '-> ';
-    output += stringSanitizer.sanitize.keepSpace(`${payload.message}`);
+    output += stringSanitizeKeepSpace(`${payload.message}`);
 
-    if(payload.others) output += ` (${stringSanitizer.sanitize.keepSpace(`${payload.others}`)})`;
+    if(payload.others) output += ` (${stringSanitizeKeepSpace(`${payload.others}`)})`;
 
     logger.info(output);
     console.log(output);
@@ -54,3 +64,9 @@ exports.setLog = (options) => {
 }
 
 
+module.exports = { 
+    defaultToIfEmpty,
+    throwErrorsHttp,
+    stringSanitizeKeepSpace,
+    setLog, 
+};
