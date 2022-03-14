@@ -1,17 +1,19 @@
 const User = require('../../models/users/index')
+    , Roles = require('../../models/roles/index')
     , { setLog } = require('../../../helper/utils')
     , { roles:  ROLE } = require('../../../config/constant');
 
 const seedUsers = async() => {
     try {
         const password   = 'White1704';
+        const roles = await Roles.findOne({ code: ROLE['USR']['code'] });
 
         const users = [
             {
               username: "angellee177",
               email: "angelriapurnamasari17@gmail.com",
               password,
-              roles: JSON.stringify([ ROLE['USR']['code'] ]),
+              roles: [ ROLE.USR['code'] ],
             }
           ];
 
@@ -24,7 +26,7 @@ const seedUsers = async() => {
 
             if(!isExistingUser){
                 const userData = new User(users[i]);
-            
+                                
                 await userData.save();
                 
                 setLog({
