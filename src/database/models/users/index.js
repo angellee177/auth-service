@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
     , Schema = mongoose.Schema
     , bcrypt = require('bcrypt')
     , saltRounds = 10
-    , dotenv = require('dotenv')
+    , { roles:  ROLE, branch_code: BRANCH } = require('../../../config/constant')
     , jwt = require('jsonwebtoken')
     , { defaultToIfEmpty } = require('../../../helper/utils')
 
@@ -25,27 +25,54 @@ const userSchema = new Schema({
         required: true
     },
     roles: {
-        type: String,
-        required: true
+        type: [String],
+        enum: [
+            ROLE.ADM['code'], 
+            ROLE.CS['code'],
+            ROLE.GA['code'],
+            ROLE.OPS['code'],
+            ROLE.OWN['code'],
+            ROLE.SM['code'],
+            ROLE.SPM['code'],
+            ROLE.SPV['code'],
+            ROLE.USR['code'],
+        ],
+        required: true,
     },
-    full_name: {
+    fullname: {
         type: String,
     },
-    contact_number: {
+    dob: {
+        type: Date,
+        default: null,
+    },
+    phoneNumber: {
         type: String,
+        default: null,
     },
     address: {
         type: String,
+        default: null,
     },
-    created_at: {
+    nip: {
+        type: String,
+        default: null,
+        comment: "Nomor Induk Pegawai",
+    },
+    branchCode: {
+        type: String,
+        default: BRANCH['MGL'],
+        enum: Object.values(BRANCH),
+    },
+    createdAt: {
         type: Date,
         default: Date.now,
     },
-    updated_at: {
+    updatedAt: {
         type: Date,
         default: Date.now,
     },
-    deleted_at: {
+    deletedAt: {
         type: Date,
         default: Date.now,
     }
