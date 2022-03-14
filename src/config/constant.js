@@ -23,7 +23,7 @@ exports.roles = {
     },
     SPM: {
         code: "SPM",
-        name: "Sales & Purchasing Manager"
+        name: "Sales or Purchasing Manager"
     },
     SPV: {
         code: "SPV",
@@ -39,6 +39,12 @@ exports.roles = {
     },
     USR: {
         code: "USR",
-        name: "User/Customer"
+        name: "User or Customer"
     },
+}
+
+exports.branch_code = {
+    MGL: "Mega Legenda",
+    BAJ: "Batu Aji",
+    TJP: "Tanjungpinang"
 }
