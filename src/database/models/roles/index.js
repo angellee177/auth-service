@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-    , Schema = mongoose.Schema
-
+    , Schema = mongoose.Schema;
+    
 const roleSchema = new Schema({
     name: {
         type: String,
@@ -11,6 +11,9 @@ const roleSchema = new Schema({
         type: String,
         required: true,
         unique: true
+    },
+    created_by: {
+        type: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
     },
     created_at: {
         type: Date,
