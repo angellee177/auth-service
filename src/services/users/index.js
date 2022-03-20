@@ -67,6 +67,25 @@ const User =  require('../../database/models/users/index')
 
 /**
  * 
+ * Get User Detail
+ */
+const user = async(userId) => {
+    const userInfo = await User.findById(userId);
+
+    if(!userInfo) {
+        const errorMessage = "Oops, User Not found";
+        setLog({
+            level: 'Users Services', method: 'Get User Detail Failed', message: errorMessage
+        });
+
+        throwErrorsHttp(errorMessage, StatusCodes.NOT_FOUND);
+    };
+
+    return userInfo;
+};
+
+/**
+ * 
  * Get Users
  * 
  */
@@ -87,7 +106,7 @@ const users = async() => {
         if(!userInfo) {
             const errorMessage = "Oops, wrong email. please kindly check again.";
             setLog({
-                level: 'User Services', method: 'Login failed', message: errorMessage, others: email
+                level: 'User Services', method: 'Generate Auth Token failed', message: errorMessage, others: email
             });
 
             throwErrorsHttp(errorMessage, StatusCodes.NOT_FOUND);
@@ -98,7 +117,7 @@ const users = async() => {
         if(!validPassword) {
             const errorMessage = "Oops, wrong password. please kindly check again.";
             setLog({
-                level: 'User Services', method: 'Login failed', message: errorMessage, others: email
+                level: 'User Services', method: 'Generate Auth Token failed', message: errorMessage, others: email
             });
 
             throwErrorsHttp(errorMessage, StatusCodes.NOT_FOUND);
@@ -138,13 +157,13 @@ const update = async(payload, email) => {
     if(userInfo) {
         const errorMessage = "Oops, You already have account with this email!";
         setLog({
-            level: 'Users Services', method: 'Register Failed', message: errorMessage
+            level: 'Users Services', method: 'Update Failed', message: errorMessage
         });
 
         throwErrorsHttp(errorMessage, StatusCodes.NOT_FOUND);
     };
 
-    const result = await User.update({ _id: userInfo._id }, payload);
+    const result = await User.findByIdAndUpdate({ _id: userInfo._id }, payload);
 
     return result;
 }
@@ -152,6 +171,7 @@ const update = async(payload, email) => {
 module.exports = { 
     register, 
     users, 
+    user,
     generateAuthToken,
     update, 
 };
