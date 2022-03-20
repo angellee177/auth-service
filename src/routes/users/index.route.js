@@ -12,7 +12,7 @@ routes.get(
     Controllers.users,
 )
 
-route.get(
+routes.get(
     '/:userId',
     [
         AuthMiddleware.authenticate([
