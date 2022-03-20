@@ -12,6 +12,24 @@ routes.get(
     Controllers.users,
 )
 
+route.get(
+    '/:userId',
+    [
+        AuthMiddleware.authenticate([
+            roles['ADM']['code'],
+            roles['GA']['code'],
+            roles['CS']['code'],
+            roles['OPS']['code'],
+            roles['OWN']['code'],
+            roles['SM']['code'],
+            roles['SPM']['code'],
+            roles['SPV']['code'],
+            roles['USR']['code'],
+        ]),
+    ],
+    Controllers.user,
+)
+
 routes.put(
     '/update/my-profile',
     [

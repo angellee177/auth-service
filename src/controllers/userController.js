@@ -29,6 +29,32 @@ const { StatusCodes } = require('http-status-codes')
 
 /**
  * 
+ * Get user detail
+ * 
+ */
+ const user = async(req, res) => {
+    const { userId } = req.params;
+    
+    try {
+        const result = await Service.user(userId);
+
+        setLog({
+            level: 'Auth Controller', method: 'Get User Detail', message: "Success"
+        });
+
+        return res.status(StatusCodes.OK).json(successResponse("success", result));
+
+    } catch(e) {
+        setLog({
+            level: 'Auth Controller', method: 'Get User Detail failed', message: e.message
+        });
+
+        return res.status(StatusCodes.EXPECTATION_FAILED).json(errorResponse(e.message));
+    }
+};
+
+/**
+ * 
  * Update User Profile.
  * 
  */
