@@ -17,14 +17,12 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
+      ## don’t change anything in this section
     runs-on: ubuntu-latest
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    
     strategy:
       matrix:
         node-version: [16.13.2]
+    
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
           - uses: actions/checkout@v2
@@ -33,7 +31,7 @@ jobs:
             with:
               heroku_api_key: ${{secrets.HEROKU_API_KEY}}
               heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
-              heroku_email: ${{secretes.HEROKU_EMAIL}}
+              heroku_email: ${{secrets.HEROKU_EMAIL}}
               db_production: ${{secrets.DB_PRODUCTION}}
               node_env: ${{secrets.NODE_ENV}}
               jwt_secret_key: ${{secrets.JWT_SECRET_KEY}}
