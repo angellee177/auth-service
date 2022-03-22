@@ -81,4 +81,5 @@ const update = async(req, res, next) => {
 module.exports = {
     users,
     update,
+    user,
 };
