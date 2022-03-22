@@ -48,3 +48,9 @@ exports.branch_code = {
     BAJ: "Batu Aji",
     TJP: "Tanjungpinang"
 }
+
+exports.CAR_STATUS = {
+    pending: "waiting for approvals",
+    approved: "approved",
+    rejected: "rejected",
+};
