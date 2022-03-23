@@ -1,4 +1,5 @@
 const User =  require('../../database/models/users/index')
+    , Roles = require('../../database/models/roles/index')
     , { throwErrorsHttp, setLog } = require('../../helper/utils')
     , { StatusCodes } = require('http-status-codes')
     , Auth = require('../../middleware/auth')
@@ -27,7 +28,7 @@ const User =  require('../../database/models/users/index')
         username, 
         email,
         password, 
-        roles = [ ROLE['USR']['code'] ],
+        roles,
         fullname,
         phoneNumber = null,
         dob = null,
@@ -36,9 +37,9 @@ const User =  require('../../database/models/users/index')
         branchCode = BRANCH.MGL,
     } = payload;
     
-    const userInfo = await User.findOne({ email });
+    const userInfo = await User.find({ email });
       
-    if(userInfo) {
+    if(userInfo.length !== 0) {
         const errorMessage = "Oops, You already have account with this email!";
         setLog({
             level: 'Users Services', method: 'Register Failed', message: errorMessage
@@ -46,19 +47,32 @@ const User =  require('../../database/models/users/index')
 
         throwErrorsHttp(errorMessage, StatusCodes.NOT_FOUND);
     };
-    
+
+        
     const user = new User({
         username,
         email,
         fullname,
         password,
-        roles,
         phoneNumber,
         dob,
         address,
         nip,
         branchCode,
     });
+
+    for(let i = 0; i < roles.length; i++) {
+        const isValidRole = await Roles.find({
+            $and: [
+                { _id: { $eq: roles[i] } },
+                { deletedAt: { $eq: null } }
+            ]
+        });
+    
+        if(isValidRole.length === 0) return throwErrorsHttp("Oops, Roles not found");
+
+        user['roles'].push(isValidRole[0])
+    };
 
     await user.save();
 
@@ -69,10 +83,10 @@ const User =  require('../../database/models/users/index')
  * 
  * Get User Detail
  */
-const user = async(userId) => {
-    const userInfo = await User.findById(userId);
+const user = async(userId) => {    
+    const userInfo = await User.find({ _id: userId });
 
-    if(!userInfo) {
+    if(userInfo.length === 0) {
         const errorMessage = "Oops, User Not found";
         setLog({
             level: 'Users Services', method: 'Get User Detail Failed', message: errorMessage
@@ -81,7 +95,27 @@ const user = async(userId) => {
         throwErrorsHttp(errorMessage, StatusCodes.NOT_FOUND);
     };
 
-    return userInfo;
+    return userInfo[0];
+};
+
+/**
+ * 
+ * Get current user who are loggin.
+ * 
+ */
+ const currentUser = async(email) => {    
+    const userInfo = await User.find({ email: email });
+
+    if(userInfo.length === 0) {
+        const errorMessage = "Oops, User Not found";
+        setLog({
+            level: 'Users Services', method: 'Get User Detail Failed', message: errorMessage
+        });
+
+        throwErrorsHttp(errorMessage, StatusCodes.NOT_FOUND);
+    };
+
+    return userInfo[0];
 };
 
 /**
@@ -101,9 +135,10 @@ const users = async() => {
  */
  const generateAuthToken = async(email, password) => {
 
-        const userInfo = await User.findOne({ email });
+        const userInfo = await User.find({ email });
+        console.log("🚀 ~ file: index.js ~ line 120 ~ generateAuthToken ~ userInfo", userInfo)
 
-        if(!userInfo) {
+        if(userInfo.length === 0) {
             const errorMessage = "Oops, wrong email. please kindly check again.";
             setLog({
                 level: 'User Services', method: 'Generate Auth Token failed', message: errorMessage, others: email
@@ -112,7 +147,7 @@ const users = async() => {
             throwErrorsHttp(errorMessage, StatusCodes.NOT_FOUND);
         }
         
-        const validPassword = await bcrypt.compare(password, userInfo['password']);
+        const validPassword = await bcrypt.compare(password, userInfo[0]['password']);
 
         if(!validPassword) {
             const errorMessage = "Oops, wrong password. please kindly check again.";
@@ -124,7 +159,7 @@ const users = async() => {
         };
 
         // get user info
-        const role = get(userInfo, 'roles');
+        const role = get(userInfo[0], 'roles');
 
         const token = await Auth.encodingToken(email, role);
 
@@ -152,10 +187,10 @@ const users = async() => {
  * @param {String} email 
  */
 const update = async(payload, email) => {
-    const userInfo = await User.findOne({ email });
+    const userInfo = await User.find({ email });
       
-    if(userInfo) {
-        const errorMessage = "Oops, You already have account with this email!";
+    if(userInfo.length === 0) {
+        const errorMessage = "this account is not exists!";
         setLog({
             level: 'Users Services', method: 'Update Failed', message: errorMessage
         });
@@ -163,15 +198,21 @@ const update = async(payload, email) => {
         throwErrorsHttp(errorMessage, StatusCodes.NOT_FOUND);
     };
 
-    const result = await User.findByIdAndUpdate({ _id: userInfo._id }, payload);
+    await userInfo[0].update(payload);
 
-    return result;
-}
+
+    return userInfo;
+};
+
+// const delete = async(userId) => {
+//     const 
+// }
 
 module.exports = { 
     register, 
     users, 
     user,
+    currentUser,
     generateAuthToken,
     update, 
 };
