@@ -49,14 +49,14 @@ const updateRole = async(roleId, name) => {
  * 
  */
 const getRole = async( roleId ) => {
-    const role = await Roles.findOne({
+    const role = await Roles.find({
         $and: [
             { _id: roleId },
             { deleted_at: null }
         ],
     });
 
-    if(!role) {
+    if(role.length === 0) {
         const errorMessage = "Oops, Role doesn't exist. Please try another one.";
         setLog({
             level: "Roles Services", method: "Get Role failed", message: erroMessage
@@ -65,7 +65,7 @@ const getRole = async( roleId ) => {
         throwErrorsHttp(errorMessage, StatusCodes.NOT_FOUND);
     };
 
-    return role;
+    return role[0];
 };
 
 /**
