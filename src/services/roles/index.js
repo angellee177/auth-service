@@ -11,28 +11,10 @@ const Roles = require('../../database/models/roles/index')
  * @param {String} name 
  */
 const newRole = async(code, name) => {
-    const isExistRole = await Roles.findOne({
-        $or: [
-            { name },
-            { code }
-        ]
-    });
-
-    if(isExistRole) {
-        const errorMessage = "Oops, name of role or code of role already exist in database. Please use another one.";
-        setLog({
-            level: "Roles Services", method: "Create new Role failed", message: erroMessage
-        });
-
-        throwErrorsHttp(errorMessage, StatusCodes.BAD_REQUEST);
-    };
-
-    const role = new Roles({
+    const role = await Roles.insertMany([{
         name,
         code,
-    });
-
-    await role.save();
+    }]);
 
     return role;
 };
