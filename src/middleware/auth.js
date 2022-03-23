@@ -1,10 +1,11 @@
 
 const jwt = require('jsonwebtoken')
+    , Role = require('../database/models/roles')
     , { set, get } = require('lodash')
     , dotenv = require('dotenv')
     , { StatusCodes } = require('http-status-codes')
     , { roles: availableRoles } = require('../config/constant')
-    , { successResponse, errorResponse } = require('../helper/response')
+    , { errorResponse } = require('../helper/response')
     , { throwErrorsHttp, setLog, defaultToIfEmpty } = require('../helper/utils');
 
 dotenv.config();
@@ -16,7 +17,7 @@ dotenv.config();
  * 
  */
 const decodingToken = (token) => {
-    if (token) {
+    if (token) {                
         try {
             const secretKey = defaultToIfEmpty(process.env.JWT_SECRET_KEY, 'fake-secret-key');
 
@@ -63,9 +64,16 @@ const authenticate = (roles) => async(req, res, next) => {
         
         const role      = get(user, 'role', null);      
         const email     = get(user, 'email', null);
+
+        let rolesCode = [];
         
-        const authorizeRole = roles.filter((val, i) => val === role[i]);
-        console.log("🚀 ~ file: auth.js ~ line 70 ~ authenticate ~  authorizeRole ",  authorizeRole )
+        for(let i = 0; i < role.length; i++) {
+            const roleCode = await Role.find({ _id: role });
+            rolesCode.push(roleCode[0]['code']);
+        }
+      
+        
+        const authorizeRole = roles.filter((val) => rolesCode.includes(val));
 
         if(authorizeRole.length === 0) {  
             const errorMessage = "Auth Middleware, authenticate: you don't have permission to access this API!";  
