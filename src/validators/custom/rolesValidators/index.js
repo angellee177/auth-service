@@ -6,14 +6,14 @@ const Roles = require("../../../database/models/roles")
  * @param {Object} path 
  */
 exports.isValidRole = async(value, { path }) => {
-    const isValid = await Roles.findOne({
+    const isValid = await Roles.find({
         $and: [
             { name: { $eq: value } },
             { deletedAt: { $eq: null } }
         ]
     });
 
-    if(!isValid) {
+    if(isValid.length === 0) {
         throw new Error(`The selected ${path} is invalid`);
     }
 
