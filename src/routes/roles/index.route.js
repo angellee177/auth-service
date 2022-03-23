@@ -15,7 +15,11 @@ routes.post(
 routes.get(
     "/",
     [
-        AuthMiddleware.authenticate([roles.GA['code'], roles.ADM['code'], roles.OWN['code']])
+        AuthMiddleware.authenticate([
+            roles.GA['code'], 
+            roles.ADM['code'], 
+            roles.OWN['code']
+        ])
     ],
     RolesControllers.roles,
 );
