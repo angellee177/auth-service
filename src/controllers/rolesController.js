@@ -10,11 +10,13 @@ const Roles = require("../database/models/roles/index")
  * 
  */
 const createNewRoles = async(req, res) => {
-    const { email } = req.headers;
+    // const { email } = req.headers;
     const { code, name } = req.body;
+    console.log("🚀 ~ file: rolesController.js ~ line 15 ~ createNewRoles ~  code,",  code,)
+
 
     try {
-        const role = await Service.newRole(code, name, email);
+        const role = await Service.newRole(code, name);
 
         setLog({
             level: "Roles Controller", method: "Create New Roles", message: "Success"

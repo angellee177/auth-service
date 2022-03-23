@@ -24,21 +24,7 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    roles: {
-        type: [String],
-        enum: [
-            ROLE.ADM['code'], 
-            ROLE.CS['code'],
-            ROLE.GA['code'],
-            ROLE.OPS['code'],
-            ROLE.OWN['code'],
-            ROLE.SM['code'],
-            ROLE.SPM['code'],
-            ROLE.SPV['code'],
-            ROLE.USR['code'],
-        ],
-        required: true,
-    },
+    roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Roles" }],
     fullname: {
         type: String,
     },

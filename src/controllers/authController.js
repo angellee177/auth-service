@@ -29,34 +29,6 @@ const login = async(req, res, next) => {
     }
 };
 
-
-/**
- * 
- * Create new User Account
- * 
- */
-const register = async(req, res) => {
-    const { email, username } = req.body;
-    
-    try {
-        const result = await Service.register(req.body);
-
-        setLog({
-            level: 'Auth Controller', method: 'Register new User', message: email, others: username
-        });
-
-        return res.status(StatusCodes.OK).json(successResponse("success", result));
-
-    } catch(e) {
-        setLog({
-            level: 'Auth Controller', method: 'Register new User failed', message: e.message
-        });
-
-        return res.status(StatusCodes.EXPECTATION_FAILED).json(errorResponse(e.message));
-    }
-};
-
 module.exports = {
     login,
-    register,
 };

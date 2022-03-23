@@ -7,7 +7,6 @@ const express = require('express')
     , { NODE_ENVIRONMENT } = require('./src/config/constant')
     , { defaultToIfEmpty, setLog } = require('./src/helper/utils')
     , mongoose = require('mongoose')
-    , { seedingData } = require('./src/database/seeders/index');
 
 dotenv.config();
 
@@ -35,16 +34,18 @@ app.get("/", (req, res) => {
     })
 })
 
-if(env === NODE_ENVIRONMENT.dev || env ===  NODE_ENVIRONMENT.prod) {
-    seedingData();
-}
 
-mongoose.connect(dbConnection)
-.then(() => {
+try {
+    mongoose.connect(dbConnection, () => {
+        setLog({
+            level: 'Server', method: 'Connecting to database', message: 'Success', others: configDB[env]
+        }); 
+    })
+} catch(e) {
     setLog({
-        level: 'Server', method: 'Connecting to database', message: 'Success', others: configDB[env]
-    }); 
-});
+        level: 'Server', method: 'Failed Connecting to database', message: e.message, others: configDB[env]
+    });
+};
 
 try {
     app.listen(port, () => {

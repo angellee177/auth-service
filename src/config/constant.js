@@ -39,7 +39,7 @@ exports.roles = {
     },
     USR: {
         code: "USR",
-        name: "User or Customer"
+        name: "User or Customer",
     },
 }
 

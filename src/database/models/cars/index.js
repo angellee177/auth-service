@@ -1,8 +1,9 @@
 const mongoose = require('mongoose')
     , Schema = mongoose.Schema
+    , { CAR_STATUS } = require('../../../config/constant');
 
 const carSchema = new Schema({
-    nomor_kendaraan: {
+    nomorKendaraan: {
         type: String,
         required: true,
         unique: true,
@@ -15,7 +16,11 @@ const carSchema = new Schema({
         type: String,
         required: true,
     },
-    picture: {
+    tahun: {
+        type: BigInt,
+        required: true,
+    },
+    picture: { 
         type: [String],
         required: true,
     },
@@ -24,23 +29,31 @@ const carSchema = new Schema({
         default: null,
         comment: "Lokasi atau tempat mobil ini",
     },
-    service_fee: {
+    serviceFee: {
         type: String,
         default: null,
     },
     price: {
+        type: BigInt,
+        default: null,
+    },
+    status: {
+        type: String,
+        enum: Object.keys(CAR_STATUS),
+    },
+    rejectedReason: {
         type: String,
         default: null,
     },
-    created_at: {
+    createdAt: {
         type: Date,
         default: Date.now,
     },
-    updated_at: {
+    updatedAt: {
         type: Date,
         default: Date.now,
     },
-    deleted_at: {
+    deletedAt: {
         type: Date,
         default: Date.now,
     },
