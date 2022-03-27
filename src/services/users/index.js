@@ -61,18 +61,18 @@ const User =  require('../../database/models/users/index')
         branchCode,
     });
 
-    for(let i = 0; i < roles.length; i++) {
-        const isValidRole = await Roles.find({
-            $and: [
-                { _id: { $eq: roles[i] } },
-                { deletedAt: { $eq: null } }
-            ]
-        });
-    
-        if(isValidRole.length === 0) return throwErrorsHttp("Oops, Roles not found");
 
-        user['roles'].push(isValidRole[0])
-    };
+    const isValidRole = await Roles.find({
+        $and: [
+            { _id: { $eq: roles[i] } },
+            { deletedAt: { $eq: null } }
+        ]
+    });
+
+    if(isValidRole.length === 0) return throwErrorsHttp("Oops, Roles not found");
+
+    user['roles'] = isValidRole[0]
+
 
     await user.save();
 
@@ -136,7 +136,6 @@ const users = async() => {
  const generateAuthToken = async(email, password) => {
 
         const userInfo = await User.find({ email });
-        console.log("🚀 ~ file: index.js ~ line 120 ~ generateAuthToken ~ userInfo", userInfo)
 
         if(userInfo.length === 0) {
             const errorMessage = "Oops, wrong email. please kindly check again.";

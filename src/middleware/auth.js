@@ -65,17 +65,11 @@ const authenticate = (roles) => async(req, res, next) => {
         const role      = get(user, 'role', null);      
         const email     = get(user, 'email', null);
 
-        let rolesCode = [];
+        const roleCode = await Role.find({ _id: role });
         
-        for(let i = 0; i < role.length; i++) {
-            const roleCode = await Role.find({ _id: role });
-            rolesCode.push(roleCode[0]['code']);
-        }
-      
-        
-        const authorizeRole = roles.filter((val) => rolesCode.includes(val));
+        const authorizeRole = roles.includes(roleCode);
 
-        if(authorizeRole.length === 0) {  
+        if(!authorizeRole) {  
             const errorMessage = "Auth Middleware, authenticate: you don't have permission to access this API!";  
             throwErrorsHttp(errorMessage);
         }

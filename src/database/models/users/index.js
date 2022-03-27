@@ -24,7 +24,7 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Roles" }],
+    roles: { type: mongoose.Schema.Types.ObjectId, ref: "Roles" },
     fullname: {
         type: String,
     },
