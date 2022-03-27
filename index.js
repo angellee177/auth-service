@@ -7,6 +7,7 @@ const express = require('express')
     , { NODE_ENVIRONMENT } = require('./src/config/constant')
     , { defaultToIfEmpty, setLog } = require('./src/helper/utils')
     , mongoose = require('mongoose')
+    , { seedingData } = require('./src/database/seeders/index');
 
 dotenv.config();
 
@@ -34,6 +35,9 @@ app.get("/", (req, res) => {
     })
 })
 
+if(env === NODE_ENVIRONMENT.dev || env ===  NODE_ENVIRONMENT.prod) {
+    seedingData();
+}
 
 try {
     mongoose.connect(dbConnection, () => {
