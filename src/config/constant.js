@@ -13,6 +13,14 @@ exports.roles = {
         code: "ADM",
         name: "Administrator",
     },
+    ADB: {
+        code: 'ADB',
+        name: "Admin Pembelian",
+    },
+    ADS: {
+        code: 'ADS',
+        name: "Admin Penjualan",
+    },
     OWN: {
         code: "OWN",
         name: "Owner"
